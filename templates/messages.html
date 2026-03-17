@@ -1,0 +1,49 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="admin-brand">
+      <span class="logo-mark">V</span>
+      <div>
+        <div class="admin-title">Vertex CMS</div>
+        <div class="admin-subtitle">Research & Insights</div>
+      </div>
+    </div>
+    <nav class="admin-nav">
+      <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('admin_reports') }}">Research Reports</a>
+      <a href="{{ url_for('admin_users') }}">Users</a>
+      <a class="active" href="{{ url_for('admin_messages') }}">Contact Messages</a>
+      <a href="/">View Site</a>
+    </nav>
+    <a class="btn btn-ghost admin-logout" href="{{ url_for('admin_logout') }}">Logout</a>
+  </aside>
+
+  <main class="admin-content">
+    <div class="admin-header">
+      <h2>Contact Messages</h2>
+    </div>
+
+    <div class="admin-table">
+      <div class="admin-row admin-head">
+        <div>Name</div>
+        <div>Email</div>
+        <div>Company</div>
+        <div>Interest</div>
+        <div>Message</div>
+        <div>Date</div>
+      </div>
+      {% for msg in messages %}
+      <div class="admin-row">
+        <div>{{ msg.name or '-' }}</div>
+        <div>{{ msg.email }}</div>
+        <div>{{ msg.company or '-' }}</div>
+        <div>{{ msg.interest or '-' }}</div>
+        <div>{{ msg.message or '-' }}</div>
+        <div>{{ msg.created_at.strftime('%Y-%m-%d') if msg.created_at else '-' }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </main>
+</div>
+{% endblock %}

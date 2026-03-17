@@ -1,0 +1,142 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<header class="site-header" id="home">
+  <nav class="navbar navbar-dark navbar-expand-lg nav">
+    <div class="container-fluid px-0">
+      <div class="logo navbar-brand">
+        <span class="logo-mark">V</span>
+        <span class="logo-text">Vertex Capital Africa</span>
+      </div>
+      <button class="navbar-toggler nav-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-controls="mobileNav" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse">
+        <div class="nav-links ms-auto">
+          <a href="/">Home</a>
+          <a href="/research">Research</a>
+          <a href="/#sectors">Sectors</a>
+          <a href="/#about">About</a>
+          <a href="/#advisory">Advisory</a>
+          <a href="/#contact">Contact</a>
+        </div>
+        <a class="nav-cta ms-3" href="/research">Explore Research</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="offcanvas offcanvas-end text-bg-dark mobile-menu" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel">
+    <div class="offcanvas-header">
+      <div class="logo" id="mobileNavLabel">
+        <span class="logo-mark">V</span>
+        <span class="logo-text">Vertex Capital Africa</span>
+      </div>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div class="mobile-links">
+        <a href="/" data-bs-dismiss="offcanvas">Home</a>
+        <a href="/research" data-bs-dismiss="offcanvas">Research</a>
+        <a href="/#sectors" data-bs-dismiss="offcanvas">Sectors</a>
+        <a href="/#about" data-bs-dismiss="offcanvas">About</a>
+        <a href="/#advisory" data-bs-dismiss="offcanvas">Advisory</a>
+        <a href="/#contact" data-bs-dismiss="offcanvas">Contact</a>
+      </div>
+      <a class="btn btn-primary w-100 mt-4" href="/research" data-bs-dismiss="offcanvas">Explore Research</a>
+    </div>
+  </div>
+</header>
+
+<section class="section research-page" id="research">
+  <div class="section-header">
+    <div class="label">The Vertex Perspective</div>
+    <h2>Research & Insights</h2>
+    <p>Explore all reports, filter by category or status, and download published research.</p>
+  </div>
+
+  <form class="research-filters" method="get" action="/research">
+    <input type="text" name="q" placeholder="Search by title or keyword" value="{{ q }}" />
+    <select name="category">
+      <option value="">All Categories</option>
+      {% for cat in categories %}
+        <option value="{{ cat }}" {{ 'selected' if cat == category else '' }}>{{ cat }}</option>
+      {% endfor %}
+    </select>
+    <select name="status">
+      <option value="">All Status</option>
+      <option value="published" {{ 'selected' if status == 'published' else '' }}>Published</option>
+      <option value="coming_soon" {{ 'selected' if status == 'coming_soon' else '' }}>Coming Soon</option>
+    </select>
+    <button class="btn btn-primary" type="submit">Filter</button>
+    <a class="btn btn-ghost" href="/research">Reset</a>
+  </form>
+
+  <div class="report-list">
+    {% for report in reports %}
+    <article class="report-card">
+      {% if report.cover_image %}
+        <img class="report-image" src="{{ report.cover_image }}" alt="{{ report.title }}" />
+      {% endif %}
+      <div class="report-meta">
+        <span class="tag">{{ report.category }}</span>
+        <span class="date">{{ report.quarter }}</span>
+      </div>
+      <h3>{{ report.title }}</h3>
+      <p>{{ report.excerpt }}</p>
+      <div class="report-footer">
+        {% if report.status|lower == 'published' %}
+          <span class="status">Published</span>
+          <button class="btn btn-outline" data-report="{{ report._id }}">Download Report</button>
+        {% else %}
+          <span class="status">Coming Soon</span>
+        {% endif %}
+      </div>
+    </article>
+    {% else %}
+      <p>No reports match your filters.</p>
+    {% endfor %}
+  </div>
+
+  <div class="pagination">
+    <div class="pagination-info">Showing page {{ page }} of {{ total_pages }} ({{ total }} reports)</div>
+    <div class="pagination-controls">
+      {% if page > 1 %}
+        <a class="btn btn-ghost" href="{{ url_for('research', q=q, category=category, status=status, page=page-1) }}">Previous</a>
+      {% endif %}
+      {% if page < total_pages %}
+        <a class="btn btn-outline" href="{{ url_for('research', q=q, category=category, status=status, page=page+1) }}">Next</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <span class="logo-mark">V</span>
+      <span>Vertex Capital Africa</span>
+    </div>
+    <div class="footer-meta">© 2026 Vertex Capital Africa. All rights reserved.</div>
+    <div class="footer-links">
+      <a href="https://www.linkedin.com" target="_blank" rel="noreferrer">LinkedIn</a>
+      <a href="https://twitter.com" target="_blank" rel="noreferrer">Twitter/X</a>
+      <a href="mailto:margaret@vertexcapitalafrica.com">Email</a>
+    </div>
+  </div>
+</footer>
+
+<div class="report-modal" id="report-modal" aria-hidden="true">
+  <div class="modal-content">
+    <button class="modal-close" type="button" aria-label="Close">×</button>
+    <h3>Download Report</h3>
+    <p>Enter your details to receive the report. You will be added to our research list.</p>
+    <form id="report-form">
+      <input type="hidden" name="report_id" id="report-id" />
+      <input type="text" name="name" placeholder="Name" required />
+      <input type="email" name="email" placeholder="Email" required />
+      <input type="text" name="company" placeholder="Company (optional)" />
+      <button class="btn btn-primary" type="submit">Submit & Download</button>
+      <div class="form-note" id="report-note"></div>
+    </form>
+  </div>
+</div>
+{% endblock %}

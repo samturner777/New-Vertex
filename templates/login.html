@@ -1,0 +1,27 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="auth auth-bg">
+  <div class="auth-overlay"></div>
+  <div class="auth-card pro">
+    <div class="auth-header">
+      <div class="logo">
+        <span class="logo-mark">V</span>
+        <span class="logo-text">Vertex Capital Africa</span>
+      </div>
+      <span class="auth-label">Admin Portal</span>
+    </div>
+    <h2>Research Portal Login</h2>
+    <p>Access the research CMS to publish reports and manage gated downloads.</p>
+    <form method="post">
+      <input type="text" name="username" placeholder="Username" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <button class="btn btn-primary" type="submit">Login</button>
+      {% with messages = get_flashed_messages(category_filter=['error']) %}
+        {% if messages %}
+          <p class="error">{{ messages[0] }}</p>
+        {% endif %}
+      {% endwith %}
+    </form>
+  </div>
+</div>
+{% endblock %}

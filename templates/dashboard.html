@@ -1,0 +1,320 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="admin-brand">
+      <span class="logo-mark">V</span>
+      <div>
+        <div class="admin-title">Vertex CMS</div>
+        <div class="admin-subtitle">Research & Insights</div>
+      </div>
+    </div>
+    <nav class="admin-nav">
+      <a class="active" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('admin_reports') }}">Research Reports</a>
+      <a href="{{ url_for('admin_users') }}">Users</a>
+      <a href="{{ url_for('admin_messages') }}">Contact Messages</a>
+      <a href="/">View Site</a>
+    </nav>
+    <a class="btn btn-ghost admin-logout" href="{{ url_for('admin_logout') }}">Logout</a>
+  </aside>
+
+  <main class="admin-content">
+    <div class="dashboard-header">
+      <div>
+        <h2>Admin Dashboard</h2>
+        <p>Research, audience, and engagement overview</p>
+      </div>
+      <a class="btn btn-outline" href="{{ url_for('admin_reports') }}">+ Add Research Report</a>
+    </div>
+
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Reports</div>
+        <div class="kpi-value">{{ total_reports }}</div>
+        <div class="kpi-help">All research entries created</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Published Reports</div>
+        <div class="kpi-value">{{ published_reports }}</div>
+        <div class="kpi-help">Live reports available publicly</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Newsletter Subscribers</div>
+        <div class="kpi-value">{{ subscribers_count }}</div>
+        <div class="kpi-help">Audience captured from forms</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Total Report Downloads</div>
+        <div class="kpi-value">{{ downloads_count }}</div>
+        <div class="kpi-help">All gated report downloads</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Contact Inquiries</div>
+        <div class="kpi-value">{{ inquiries_count }}</div>
+        <div class="kpi-help">Direct business/contact messages</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Download Conversion Rate</div>
+        <div class="kpi-value">{{ conversion_rate }}%</div>
+        <div class="kpi-help">Download leads vs subscribers</div>
+      </div>
+    </section>
+
+    <section class="dashboard-card">
+      <div class="card-header">
+        <h3>Report Downloads by Research</h3>
+      </div>
+      <canvas id="reportDownloadsChart" height="120"></canvas>
+    </section>
+
+    <section class="chart-grid">
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h3>Monthly Research Downloads</h3>
+        </div>
+        <canvas id="monthlyDownloadsChart" height="180"></canvas>
+      </div>
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h3>Newsletter Subscriber Growth</h3>
+        </div>
+        <canvas id="subscriberGrowthChart" height="180"></canvas>
+      </div>
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h3>Interest by Sector</h3>
+        </div>
+        <canvas id="sectorInterestChart" height="180"></canvas>
+      </div>
+    </section>
+
+    <section class="dashboard-split">
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h3>Quick Actions</h3>
+        </div>
+        <div class="quick-actions">
+          <a class="btn btn-primary" href="{{ url_for('admin_reports') }}">Add Research Report</a>
+          <a class="btn btn-outline" href="{{ url_for('admin_reports') }}">View Reports</a>
+          <a class="btn btn-outline" href="{{ url_for('admin_users') }}">View Subscribers</a>
+          <a class="btn btn-outline" href="{{ url_for('admin_users') }}">View Download Leads</a>
+          <a class="btn btn-outline" href="{{ url_for('admin_messages') }}">View Inquiries</a>
+        </div>
+      </div>
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h3>System Summary</h3>
+        </div>
+        <div class="summary-grid">
+          <div>
+            <span>Last Report Published</span>
+            <strong>{{ last_report_title or 'No data yet' }}</strong>
+          </div>
+          <div>
+            <span>Most Downloaded Report</span>
+            <strong>{{ top_report_title or 'No data yet' }}</strong>
+          </div>
+          <div>
+            <span>Latest Subscriber</span>
+            <strong>{{ latest_subscriber_email or 'No data yet' }}</strong>
+          </div>
+          <div>
+            <span>Latest Inquiry</span>
+            <strong>{{ latest_inquiry_name or 'No data yet' }}</strong>
+          </div>
+          <div>
+            <span>Latest Download Lead</span>
+            <strong>{{ latest_download_lead_email or 'No data yet' }}</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard-card">
+      <div class="card-header">
+        <h3>Recent Download Leads</h3>
+      </div>
+      <div class="table-wrap">
+        <table class="admin-table-grid">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Company</th>
+              <th>Report</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for lead in recent_leads %}
+            <tr>
+              <td>{{ lead.name or '-' }}</td>
+              <td>{{ lead.email }}</td>
+              <td>{{ lead.company or '-' }}</td>
+              <td>{{ (lead.report_tags or ['-'])|join(', ') }}</td>
+              <td>{{ lead.created_at.strftime('%Y-%m-%d') if lead.created_at else '-' }}</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="5" class="empty">No download leads yet.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="dashboard-card">
+      <div class="card-header">
+        <h3>Recent Contact Inquiries</h3>
+      </div>
+      <div class="table-wrap">
+        <table class="admin-table-grid">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Interest</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for inquiry in recent_inquiries %}
+            <tr>
+              <td>{{ inquiry.name or '-' }}</td>
+              <td>{{ inquiry.email }}</td>
+              <td>{{ inquiry.interest or '-' }}</td>
+              <td>{{ inquiry.created_at.strftime('%Y-%m-%d') if inquiry.created_at else '-' }}</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="4" class="empty">No inquiries yet.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script id="dashboard-data" type="application/json">
+  {{ {
+    "reportLabels": report_labels,
+    "reportValues": report_download_values,
+    "monthlyDownloadLabels": monthly_download_labels,
+    "monthlyDownloadValues": monthly_download_values,
+    "subscriberGrowthLabels": subscriber_growth_labels,
+    "subscriberGrowthValues": subscriber_growth_values,
+    "sectorLabels": sector_interest_labels,
+    "sectorValues": sector_interest_values
+  } | tojson }}
+</script>
+<script>
+  const dataEl = document.getElementById("dashboard-data");
+  const data = dataEl ? JSON.parse(dataEl.textContent) : {};
+  const reportLabels = data.reportLabels || [];
+  const reportValues = data.reportValues || [];
+  const monthlyDownloadLabels = data.monthlyDownloadLabels || [];
+  const monthlyDownloadValues = data.monthlyDownloadValues || [];
+  const subscriberGrowthLabels = data.subscriberGrowthLabels || [];
+  const subscriberGrowthValues = data.subscriberGrowthValues || [];
+  const sectorLabels = data.sectorLabels || [];
+  const sectorValues = data.sectorValues || [];
+
+  const gold = "#C9A84C";
+  const slate = "#94A3B8";
+
+  const reportCtx = document.getElementById("reportDownloadsChart");
+  if (reportCtx) {
+    new Chart(reportCtx, {
+      type: "bar",
+      data: {
+        labels: reportLabels,
+        datasets: [{
+          label: "Downloads",
+          data: reportValues,
+          backgroundColor: gold,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: slate } },
+          y: { ticks: { color: slate }, grid: { color: "rgba(148,163,184,0.2)" } }
+        }
+      }
+    });
+  }
+
+  const monthlyCtx = document.getElementById("monthlyDownloadsChart");
+  if (monthlyCtx) {
+    new Chart(monthlyCtx, {
+      type: "line",
+      data: {
+        labels: monthlyDownloadLabels,
+        datasets: [{
+          label: "Downloads",
+          data: monthlyDownloadValues,
+          borderColor: gold,
+          backgroundColor: "rgba(201,168,76,0.2)",
+          fill: true,
+          tension: 0.35
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: slate } },
+          y: { ticks: { color: slate }, grid: { color: "rgba(148,163,184,0.2)" } }
+        }
+      }
+    });
+  }
+
+  const subscriberCtx = document.getElementById("subscriberGrowthChart");
+  if (subscriberCtx) {
+    new Chart(subscriberCtx, {
+      type: "line",
+      data: {
+        labels: subscriberGrowthLabels,
+        datasets: [{
+          label: "Subscribers",
+          data: subscriberGrowthValues,
+          borderColor: "#60a5fa",
+          backgroundColor: "rgba(96,165,250,0.2)",
+          fill: true,
+          tension: 0.35
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: slate } },
+          y: { ticks: { color: slate }, grid: { color: "rgba(148,163,184,0.2)" } }
+        }
+      }
+    });
+  }
+
+  const sectorCtx = document.getElementById("sectorInterestChart");
+  if (sectorCtx) {
+    new Chart(sectorCtx, {
+      type: "pie",
+      data: {
+        labels: sectorLabels.length ? sectorLabels : ["No data"],
+        datasets: [{
+          data: sectorValues.length ? sectorValues : [1],
+          backgroundColor: [gold, "#1d4ed8", "#0ea5e9", "#10b981", "#f97316", "#9333ea"]
+        }]
+      },
+      options: {
+        plugins: { legend: { labels: { color: slate } } }
+      }
+    });
+  }
+</script>
+{% endblock %}

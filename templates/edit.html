@@ -1,0 +1,75 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="admin-brand">
+      <span class="logo-mark">V</span>
+      <div>
+        <div class="admin-title">Vertex CMS</div>
+        <div class="admin-subtitle">Research & Insights</div>
+      </div>
+    </div>
+    <nav class="admin-nav">
+      <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('admin_reports') }}">Research Reports</a>
+      <a href="{{ url_for('admin_users') }}">Users</a>
+      <a href="{{ url_for('admin_messages') }}">Contact Messages</a>
+      <a href="/">View Site</a>
+    </nav>
+    <a class="btn btn-ghost admin-logout" href="{{ url_for('admin_logout') }}">Logout</a>
+  </aside>
+
+  <main class="admin-content">
+    <div class="admin-header">
+      <h2>{{ 'Edit Report' if report else 'New Report' }}</h2>
+      <a class="btn btn-ghost" href="{{ url_for('admin') }}">Back</a>
+    </div>
+    <form class="admin-form" method="post" enctype="multipart/form-data">
+      <label>Title</label>
+      <input type="text" name="title" value="{{ report.title if report else '' }}" required />
+
+      <label>Excerpt</label>
+      <textarea name="excerpt" rows="4" required>{{ report.excerpt if report else '' }}</textarea>
+
+      <label>Category</label>
+      <select name="category" required>
+        {% set current = report.category if report else '' %}
+        {% for option in ['Flagship Report','Vertex View','Sector Spotlight','Market Pulse','Playbook','Opinion'] %}
+        <option value="{{ option }}" {{ 'selected' if option == current else '' }}>{{ option }}</option>
+        {% endfor %}
+      </select>
+
+      <label>Publication Quarter</label>
+      <input type="text" name="quarter" value="{{ report.quarter if report else '' }}" required />
+
+      <label>Status</label>
+      <select name="status">
+      {% set status = report.status|lower if report else '' %}
+        <option value="coming_soon" {{ 'selected' if status == 'coming_soon' else '' }}>Coming Soon</option>
+        <option value="published" {{ 'selected' if status == 'published' else '' }}>Published</option>
+      </select>
+
+      <label>PDF Upload (for Published)</label>
+      {% if report and report.pdf_url %}
+        <p class="admin-hint">Current: {{ report.pdf_url }}</p>
+      {% endif %}
+      <input type="hidden" name="pdf_url_current" value="{{ report.pdf_url if report else '' }}" />
+      <input type="file" name="pdf_file" accept=".pdf" />
+
+      <label>Cover Image Upload (optional)</label>
+      {% if report and report.cover_image %}
+        <p class="admin-hint">Current: {{ report.cover_image }}</p>
+      {% endif %}
+      <input type="hidden" name="cover_image_current" value="{{ report.cover_image if report else '' }}" />
+      <input type="file" name="cover_file" accept=".png,.jpg,.jpeg,.webp" />
+
+      <label class="checkbox">
+        <input type="checkbox" name="featured" {{ 'checked' if report and report.featured else '' }} />
+        Featured Report
+      </label>
+
+      <button class="btn btn-primary" type="submit">Save</button>
+    </form>
+  </main>
+</div>
+{% endblock %}

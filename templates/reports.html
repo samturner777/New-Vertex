@@ -1,0 +1,135 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="admin-brand">
+      <span class="logo-mark">V</span>
+      <div>
+        <div class="admin-title">Vertex CMS</div>
+        <div class="admin-subtitle">Research & Insights</div>
+      </div>
+    </div>
+    <nav class="admin-nav">
+      <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+      <a class="active" href="{{ url_for('admin_reports') }}">Research Reports</a>
+      <a href="{{ url_for('admin_users') }}">Users</a>
+      <a href="{{ url_for('admin_messages') }}">Contact Messages</a>
+      <a href="/">View Site</a>
+    </nav>
+    <a class="btn btn-ghost admin-logout" href="{{ url_for('admin_logout') }}">Logout</a>
+  </aside>
+
+  <main class="admin-content">
+    <div class="admin-header">
+      <h2>Research Reports</h2>
+      <button class="btn btn-outline" type="button" data-bs-toggle="modal" data-bs-target="#newReportModal">Add Research</button>
+    </div>
+
+    <div class="metrics">
+      <div class="metric-card">
+        <div class="metric-label">Total Reports</div>
+        <div class="metric-value">{{ total_reports }}</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Published</div>
+        <div class="metric-value">{{ published_count }}</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Coming Soon</div>
+        <div class="metric-value">{{ coming_soon_count }}</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Subscribers</div>
+        <div class="metric-value">{{ total_subscribers }}</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Download Requests</div>
+        <div class="metric-value">{{ total_downloads }}</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Inquiries</div>
+        <div class="metric-value">{{ total_inquiries }}</div>
+      </div>
+      <div class="metric-card metric-wide">
+        <div class="metric-label">Top Downloaded Report</div>
+        <div class="metric-value">{{ top_report.title if top_report else 'N/A' }}</div>
+      </div>
+    </div>
+
+    <div class="admin-table">
+      <div class="admin-row admin-head">
+        <div>Title</div>
+        <div>Category</div>
+        <div>Quarter</div>
+        <div>Status</div>
+        <div>Downloads</div>
+        <div>Actions</div>
+      </div>
+      {% for report in reports %}
+      <div class="admin-row">
+        <div>{{ report.title }}</div>
+        <div>{{ report.category }}</div>
+        <div>{{ report.quarter }}</div>
+        <div>{{ 'Published' if report.status|lower == 'published' else 'Coming Soon' }}</div>
+        <div>{{ report.download_requests or 0 }}</div>
+        <div class="admin-actions">
+          <a href="{{ url_for('report_edit', report_id=report._id) }}">Edit</a>
+          <form method="post" action="{{ url_for('report_delete', report_id=report._id) }}" onsubmit="return confirm('Delete this report?');">
+            <button type="submit">Delete</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </main>
+</div>
+
+<div class="modal fade" id="newReportModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Research Report</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form class="admin-form" method="post" action="{{ url_for('report_new') }}" enctype="multipart/form-data">
+          <label>Title</label>
+          <input type="text" name="title" required />
+
+          <label>Excerpt</label>
+          <textarea name="excerpt" rows="4" required></textarea>
+
+          <label>Category</label>
+          <select name="category" required>
+            {% for option in ['Flagship Report','Vertex View','Sector Spotlight','Market Pulse','Playbook','Opinion'] %}
+            <option value="{{ option }}">{{ option }}</option>
+            {% endfor %}
+          </select>
+
+          <label>Publication Quarter</label>
+          <input type="text" name="quarter" required />
+
+          <label>Status</label>
+          <select name="status">
+            <option value="coming_soon">Coming Soon</option>
+            <option value="published">Published</option>
+          </select>
+
+          <label>PDF Upload (for Published)</label>
+          <input type="file" name="pdf_file" accept=".pdf" />
+
+          <label>Cover Image Upload (optional)</label>
+          <input type="file" name="cover_file" accept=".png,.jpg,.jpeg,.webp" />
+
+          <label class="checkbox">
+            <input type="checkbox" name="featured" />
+            Featured Report
+          </label>
+
+          <button class="btn btn-primary" type="submit">Save Report</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
