@@ -63,6 +63,17 @@
       <input type="hidden" name="cover_image_current" value="{{ report.cover_image if report else '' }}" />
       <input type="file" name="cover_file" accept=".png,.jpg,.jpeg,.webp" />
 
+      <label>Audio Upload (optional)</label>
+      {% if report and report.audio_url %}
+      <p class="admin-hint">Current: {{ report.audio_url }}</p>
+      <audio controls style="display: block; margin-bottom: 10px; width: 100%;">
+      <source src="{{ report.audio_url }}" type="audio/mpeg">
+      Your browser does not support the audio element.
+      </audio>
+      {% endif %}
+      <input type="hidden" name="audio_url_current" value="{{ report.audio_url if report else '' }}" />
+      <input type="file" name="audio_file" accept=".mp3,.wav,.m4a,.ogg" />
+
       <label class="checkbox">
         <input type="checkbox" name="featured" {{ 'checked' if report and report.featured else '' }} />
         Featured Report

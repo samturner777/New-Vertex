@@ -499,14 +499,19 @@ def _report_payload(req, current=None):
     status = req.form.get("status", "coming_soon").strip().lower()
     pdf_url = req.form.get("pdf_url_current", "").strip() if current else ""
     cover_image = req.form.get("cover_image_current", "").strip() if current else ""
+    audio_url = req.form.get("audio_url_current", "").strip() if current else ""
     pdf_file = req.files.get("pdf_file")
     cover_file = req.files.get("cover_file")
+    audio_file = req.files.get("audio_file")
     new_pdf = _save_upload(pdf_file, "pdfs", {".pdf"})
     new_cover = _save_upload(cover_file, "covers", {".png", ".jpg", ".jpeg", ".webp"})
+    new_audio = _save_upload(audio_file, "audio", {".mp3", ".wav", ".m4a", ".ogg"})
     if new_pdf:
         pdf_url = new_pdf
     if new_cover:
         cover_image = new_cover
+    if new_audio:
+        audio_url = new_audio
     return {
         "title": req.form.get("title", "").strip(),
         "excerpt": req.form.get("excerpt", "").strip(),
@@ -516,6 +521,7 @@ def _report_payload(req, current=None):
         "status": status,
         "pdf_url": pdf_url,
         "cover_image": cover_image,
+        "audio_url": audio_url,
     }
 
 
