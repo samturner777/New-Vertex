@@ -317,6 +317,32 @@ p {
   grid-column: span 2;
 }
 
+.report-audio {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.report-audio h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.report-audio audio {
+  width: 100%;
+  border-radius: 4px;
+}
+
+.admin-hint {
+  color: #666;
+  font-size: 0.9em;
+  margin: 10px 0;
+  padding: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+}
 .report-list {
   display: grid;
   gap: 18px;
