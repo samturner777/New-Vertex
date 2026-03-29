@@ -185,7 +185,6 @@ p {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
-/* Add this new rule for the founder image */
 .founder-image {
   grid-column: 1 / -1;
   display: flex;
@@ -203,7 +202,23 @@ p {
   object-fit: cover;
 }
 
-/* Responsive design for mobile */
+.bio {
+  flex: 1;
+}
+
+.thesis {
+  .thesis {
+  margin-top: 5cm;
+}
+
+@media (max-width: 768px) {
+  .thesis {
+    margin-top: 2cm;
+  }
+}
+  flex: 1;
+}
+
 @media (max-width: 768px) {
   .founder-image img {
     max-width: 300px;
