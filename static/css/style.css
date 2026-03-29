@@ -179,6 +179,41 @@ p {
   animation-delay: 0.15s;
 }
 
+.about-grid, .contact-grid {
+  display: grid;
+  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+/* Add this new rule for the founder image */
+.founder-image {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.founder-image img {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  object-fit: cover;
+}
+
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+  .founder-image img {
+    max-width: 300px;
+  }
+  
+  .about-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .badge {
   display: inline-flex;
   align-items: center;
