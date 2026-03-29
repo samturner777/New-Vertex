@@ -179,28 +179,6 @@ p {
   animation-delay: 0.15s;
 }
 
-.founder-image {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.founder-image img {
-  width: 100%;
-  max-width: 400px;
-  height: auto;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  object-fit: cover;
-}
-
-/* Responsive design for mobile */
-@media (max-width: 768px) {
-  .founder-image img {
-    max-width: 300px;
-  }
-}
-
 .badge {
   display: inline-flex;
   align-items: center;
