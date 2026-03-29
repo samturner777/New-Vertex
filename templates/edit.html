@@ -1,5 +1,7 @@
 ﻿{% extends "base.html" %}
 {% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+
 <div class="admin-layout">
   <aside class="admin-sidebar">
     <div class="admin-brand">
@@ -56,12 +58,17 @@
       <input type="hidden" name="pdf_url_current" value="{{ report.pdf_url if report else '' }}" />
       <input type="file" name="pdf_file" accept=".pdf" />
 
+      <!-- UPDATED COVER IMAGE SECTION -->
       <label>Cover Image Upload (optional)</label>
       {% if report and report.cover_image %}
         <p class="admin-hint">Current: {{ report.cover_image }}</p>
+        <img id="coverPreview" src="{{ report.cover_image }}" alt="Cover Preview" style="max-width: 200px; margin: 10px 0; border-radius: 4px;">
+      {% else %}
+        <img id="coverPreview" src="" alt="Cover Preview" style="max-width: 200px; margin: 10px 0; border-radius: 4px; display: none;">
       {% endif %}
       <input type="hidden" name="cover_image_current" value="{{ report.cover_image if report else '' }}" />
-      <input type="file" name="cover_file" accept=".png,.jpg,.jpeg,.webp" />
+      <input type="file" id="coverFileInput" name="cover_file" accept=".png,.jpg,.jpeg,.webp" />
+      <small style="display: block; margin-top: 5px; color: #999;">Select image and click to crop</small>
 
       <label>Audio Upload (optional)</label>
       {% if report and report.audio_url %}
@@ -83,4 +90,70 @@
     </form>
   </main>
 </div>
+
+<!-- CROPPER MODAL -->
+<div id="cropperModal" style="
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.8);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px;
+">
+  <div style="
+    background: #111827;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #94a3b8;
+  ">
+    <h3 style="margin-top: 0; color: #f8fafc;">Crop Your Cover Image</h3>
+    <p style="color: #94a3b8; font-size: 14px; margin: 10px 0;">Drag to move, scroll to zoom, or resize the crop area</p>
+    <div style="
+      flex: 1;
+      overflow: auto;
+      margin: 15px 0;
+      min-height: 300px;
+      background: #0a0f1c;
+      border-radius: 4px;
+      padding: 10px;
+    ">
+      <img id="cropperImage" src="" alt="Image for cropping" style="max-width: 100%;">
+    </div>
+    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+      <button type="button" onclick="closeCropper()" style="
+        padding: 10px 20px;
+        background: #1e293b;
+        border: 1px solid #475569;
+        border-radius: 4px;
+        cursor: pointer;
+        color: #f8fafc;
+        font-size: 14px;
+      ">Cancel</button>
+      <button type="button" onclick="saveCroppedImage()" style="
+        padding: 10px 20px;
+        background: #c9a84c;
+        color: #0a0f1c;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+      ">Save Crop</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script src="{{ url_for('static', filename='js/cropper-handler.js') }}"></script>
 {% endblock %}

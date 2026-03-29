@@ -157,6 +157,32 @@ p {
   background: radial-gradient(circle, rgba(59, 130, 246, 0.3), transparent 70%);
 }
 
+#cropperModal {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+#cropperImage {
+  max-height: 400px;
+  max-width: 100%;
+}
+
+.cropper-container {
+  max-height: 400px;
+}
+
+.cropper-crop-box {
+  border: 1px dashed #c9a84c;
+}
+
 .grid-overlay {
   position: absolute;
   inset: 0;
