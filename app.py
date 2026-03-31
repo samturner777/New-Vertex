@@ -497,21 +497,37 @@ def _save_upload(file_obj, folder, allowed_ext):
 
 def _report_payload(req, current=None):
     status = req.form.get("status", "coming_soon").strip().lower()
-    pdf_url = req.form.get("pdf_url_current", "").strip() if current else ""
-    cover_image = req.form.get("cover_image_current", "").strip() if current else ""
-    audio_url = req.form.get("audio_url_current", "").strip() if current else ""
+    
+    # Keep existing values by default
+    pdf_url = current.get("pdf_url", "") if current else ""
+    cover_image = current.get("cover_image", "") if current else ""
+    audio_url = current.get("audio_url", "") if current else ""
+    
+    # Override with form values if provided
+    if req.form.get("pdf_url_current"):
+        pdf_url = req.form.get("pdf_url_current", "").strip()
+    if req.form.get("cover_image_current"):
+        cover_image = req.form.get("cover_image_current", "").strip()
+    if req.form.get("audio_url_current"):
+        audio_url = req.form.get("audio_url_current", "").strip()
+    
+    # Upload new files if provided
     pdf_file = req.files.get("pdf_file")
     cover_file = req.files.get("cover_file")
     audio_file = req.files.get("audio_file")
+    
     new_pdf = _save_upload(pdf_file, "pdfs", {".pdf"})
     new_cover = _save_upload(cover_file, "covers", {".png", ".jpg", ".jpeg", ".webp"})
     new_audio = _save_upload(audio_file, "audio", {".mp3", ".wav", ".m4a", ".ogg"})
+    
+    # Replace only if new file was uploaded
     if new_pdf:
         pdf_url = new_pdf
     if new_cover:
         cover_image = new_cover
     if new_audio:
         audio_url = new_audio
+    
     return {
         "title": req.form.get("title", "").strip(),
         "excerpt": req.form.get("excerpt", "").strip(),
