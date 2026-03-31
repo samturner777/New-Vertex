@@ -205,53 +205,66 @@ p {
   animation-delay: 0.15s;
 }
 
-.about-grid, .contact-grid {
+.about-grid {
   display: grid;
-  gap: 30px;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: 1fr 1.5fr;
+  gap: 60px;
+  align-items: start;
 }
 
 .founder-image {
-  grid-column: 1 / -1;
+  grid-column: auto;
+  margin-bottom: 0;
   display: flex;
   justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
+  align-items: flex-start;
+  position: sticky;
+  top: 100px;
 }
 
 .founder-image img {
   width: 100%;
-  max-width: 400px;
-  height: auto;
+  max-width: 320px;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  object-fit: cover;
 }
 
 .bio {
-  flex: 1;
+  grid-column: 2;
 }
 
 .thesis {
-  .thesis {
-  margin-top: 5cm;
+  grid-column: 2;
+  background: rgba(201, 168, 76, 0.08);
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  padding: 28px;
+  border-radius: 12px;
+  margin-top: 30px;
 }
 
-@media (max-width: 768px) {
-  .thesis {
-    margin-top: 2cm;
-  }
-}
-  flex: 1;
+.thesis ul {
+  padding-left: 16px;
+  margin: 0;
 }
 
-@media (max-width: 768px) {
-  .founder-image img {
-    max-width: 300px;
-  }
-  
+@media (max-width: 1024px) {
   .about-grid {
     grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .founder-image {
+    position: relative;
+    top: 0;
+  }
+  
+  .bio {
+    grid-column: 1;
+  }
+  
+  .thesis {
+    grid-column: 1;
+    margin-top: 20px;
   }
 }
 
