@@ -71,26 +71,49 @@
   </form>
 
   <div class="report-list">
-    {% for report in reports %}
-    <article class="report-card">
-      {% if report.cover_image %}
-        <img class="report-image" src="{{ report.cover_image }}" alt="{{ report.title }}" />
+  {% for report in reports %}
+  <article class="report-card">
+    {% if report.cover_image %}
+      <img class="report-image" src="{{ report.cover_image }}" alt="{{ report.title }}" />
+    {% endif %}
+    
+    <!-- AUDIO PLAY BUTTON - SHOWS ONLY IF AUDIO EXISTS -->
+    {% if report.audio_url %}
+      <div class="audio-badge">
+        <button class="play-button" onclick="toggleAudio(this, '{{ report.audio_url }}')">
+          <span class="play-icon">▶</span>
+        </button>
+        <span class="audio-label">Audio Available</span>
+      </div>
+    {% endif %}
+    
+    <div class="report-meta">
+      <span class="tag">{{ report.category }}</span>
+      <span class="date">{{ report.quarter }}</span>
+    </div>
+    
+    <h3>{{ report.title }}</h3>
+    <p>{{ report.excerpt }}</p>
+    
+    <div class="report-footer">
+      {% if report.status|lower == 'published' %}
+        <span class="status">Published</span>
+        <button class="btn btn-outline" data-report="{{ report._id }}">Download Report</button>
+      {% else %}
+        <span class="status">Coming Soon</span>
       {% endif %}
-      <div class="report-meta">
-        <span class="tag">{{ report.category }}</span>
-        <span class="date">{{ report.quarter }}</span>
-      </div>
-      <h3>{{ report.title }}</h3>
-      <p>{{ report.excerpt }}</p>
-      <div class="report-footer">
-        {% if report.status|lower == 'published' %}
-          <span class="status">Published</span>
-          <button class="btn btn-outline" data-report="{{ report._id }}">Download Report</button>
-        {% else %}
-          <span class="status">Coming Soon</span>
-        {% endif %}
-      </div>
-    </article>
+    </div>
+    
+    <!-- HIDDEN AUDIO PLAYER -->
+    <audio class="report-audio-player" style="display: none;">
+      <source src="{{ report.audio_url }}" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+  </article>
+  {% else %}
+    <p>No reports match your filters.</p>
+  {% endfor %}
+</div>
     {% else %}
       <p>No reports match your filters.</p>
     {% endfor %}

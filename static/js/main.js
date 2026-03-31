@@ -69,3 +69,37 @@ if (contactForm) {
     }
   });
 }
+
+let currentAudio = null;
+
+function toggleAudio(button, audioUrl) {
+  const audioPlayer = button.closest('.report-card').querySelector('.report-audio-player');
+  const audio = audioPlayer.querySelector('audio') || audioPlayer;
+  
+  // Stop previous audio if playing
+  if (currentAudio && currentAudio !== audio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+    document.querySelectorAll('.play-button').forEach(btn => {
+      btn.classList.remove('playing');
+    });
+  }
+  
+  // Toggle current audio
+  if (audio.paused) {
+    audio.play();
+    button.classList.add('playing');
+    currentAudio = audio;
+  } else {
+    audio.pause();
+    audio.currentTime = 0;
+    button.classList.remove('playing');
+    currentAudio = null;
+  }
+  
+  // Remove playing state when audio ends
+  audio.addEventListener('ended', function() {
+    button.classList.remove('playing');
+    currentAudio = null;
+  });
+}

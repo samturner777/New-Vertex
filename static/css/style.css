@@ -1061,6 +1061,104 @@ input, textarea, select {
   }
 }
 
+/* Audio Badge on Report Cards */
+.audio-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(201, 168, 76, 0.95);
+  padding: 8px 12px;
+  border-radius: 20px;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+}
+
+.play-button {
+  background: rgba(10, 15, 28, 0.8);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  color: var(--gold);
+  font-size: 14px;
+}
+
+.play-button:hover {
+  background: rgba(10, 15, 28, 1);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(201, 168, 76, 0.4);
+}
+
+.play-button.playing {
+  animation: pulse-play 1s infinite;
+}
+
+.play-icon {
+  display: inline-block;
+}
+
+.play-button.playing .play-icon::before {
+  content: "⏸";
+  position: absolute;
+}
+
+.play-button.playing .play-icon {
+  visibility: hidden;
+}
+
+.audio-label {
+  color: var(--midnight);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.report-card {
+  position: relative;
+}
+
+.report-audio-player {
+  width: 100%;
+  margin-top: 15px;
+  border-radius: 4px;
+}
+
+@keyframes pulse-play {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(201, 168, 76, 0.2);
+  }
+}
+
+@media (max-width: 768px) {
+  .audio-badge {
+    top: 8px;
+    right: 8px;
+    padding: 6px 10px;
+  }
+  
+  .play-button {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+  
+  .audio-label {
+    font-size: 10px;
+  }
+}
+
 @media (max-width: 900px) {
   .nav-links {
     display: none;
