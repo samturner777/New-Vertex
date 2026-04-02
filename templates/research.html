@@ -114,10 +114,18 @@
     <p>No reports match your filters.</p>
   {% endfor %}
 </div>
-    {% else %}
-      <p>No reports match your filters.</p>
-    {% endfor %}
-  </div>
+    <div class="report-list">
+  {% for report in reports %}
+  <article class="report-card">
+    {% if report.cover_image %}
+      <img class="report-image" src="{{ report.cover_image }}" alt="{{ report.title }}" />
+    {% endif %}
+    <!-- rest of card content -->
+  </article>
+  {% else %}
+    <p>No reports match your filters.</p>
+  {% endfor %}
+    </div>
 
   <div class="pagination">
     <div class="pagination-info">Showing page {{ page }} of {{ total_pages }} ({{ total }} reports)</div>
