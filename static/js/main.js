@@ -25,67 +25,76 @@ if (modal) {
   });
 }
 
+async function submitForm(form, endpoint, note, successMessage) {
+  const response = await fetch(endpoint, {
+    method: "POST",
+    body: new FormData(form),
+  });
+  const data = await response.json();
+  note.textContent = data.message || successMessage;
+  if (data.ok) {
+    form.reset();
+  }
+  return data;
+}
+
 if (reportForm) {
   reportForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     reportNote.textContent = "Submitting...";
-    const formData = new FormData(reportForm);
-    const res = await fetch("/subscribe-report", { method: "POST", body: formData });
-    const data = await res.json();
+    const data = await submitForm(
+      reportForm,
+      "/subscribe-report",
+      reportNote,
+      "Thank you. Please check your inbox."
+    );
     if (data.download) {
       window.location.href = data.download;
-      return;
     }
-    reportNote.textContent = data.message || "Thank you. Please check your inbox.";
   });
 }
 
-if (newsletterForm) {
+if (newsletterForm && newsletterNote) {
   newsletterForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const formData = new FormData(newsletterForm);
-    const res = await fetch("/newsletter/subscribe", { method: "POST", body: formData });
-    const data = await res.json();
-    if (newsletterNote) {
-      newsletterNote.textContent = data.message || "Thank you for subscribing.";
-    }
-    if (data.ok) {
-      newsletterForm.reset();
-    }
+    await submitForm(
+      newsletterForm,
+      "/newsletter/subscribe",
+      newsletterNote,
+      "Thank you for subscribing."
+    );
   });
 }
 
-if (contactForm) {
+if (contactForm && contactNote) {
   contactForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const formData = new FormData(contactForm);
-    const res = await fetch("/contact/submit", { method: "POST", body: formData });
-    const data = await res.json();
-    if (contactNote) {
-      contactNote.textContent = data.message || "Thank you for reaching out.";
-    }
-    if (data.ok) {
-      contactForm.reset();
-    }
+    await submitForm(
+      contactForm,
+      "/contact/submit",
+      contactNote,
+      "Thank you for reaching out."
+    );
   });
 }
 
 let currentAudio = null;
 
-function toggleAudio(button, audioUrl) {
-  const audioPlayer = button.closest('.report-card').querySelector('.report-audio-player');
-  const audio = audioPlayer.querySelector('audio') || audioPlayer;
-  
-  // Stop previous audio if playing
+function toggleAudio(button) {
+  const audioPlayer = button.closest(".report-card")?.querySelector(".report-audio-player");
+  const audio = audioPlayer?.querySelector("audio") || audioPlayer;
+  if (!audio) {
+    return;
+  }
+
   if (currentAudio && currentAudio !== audio) {
     currentAudio.pause();
     currentAudio.currentTime = 0;
-    document.querySelectorAll('.play-button').forEach(btn => {
-      btn.classList.remove('playing');
+    document.querySelectorAll(".play-button").forEach((btn) => {
+      btn.classList.remove("playing");
     });
   }
-  
-  // Toggle current audio
+
   if (audio.paused) {
     audio.play();
     button.classList.add('playing');
@@ -96,10 +105,9 @@ function toggleAudio(button, audioUrl) {
     button.classList.remove('playing');
     currentAudio = null;
   }
-  
-  // Remove playing state when audio ends
-  audio.addEventListener('ended', function() {
+
+  audio.onended = () => {
     button.classList.remove('playing');
     currentAudio = null;
-  });
+  };
 }

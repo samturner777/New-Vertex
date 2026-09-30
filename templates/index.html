@@ -1,4 +1,26 @@
 ﻿{% extends "base.html" %}
+{% macro report_card(report, featured=False) %}
+<article class="report-card{% if featured %} featured{% endif %}">
+  {% if report.cover_image %}
+    <img class="report-image" src="{{ report.cover_image }}" alt="{{ report.title }}" />
+  {% endif %}
+  <div class="report-meta">
+    <span class="tag">{{ report.category }}</span>
+    <span class="date">{{ report.quarter }}</span>
+  </div>
+  <h3>{{ report.title }}</h3>
+  <p>{{ report.excerpt }}</p>
+  <div class="report-footer">
+    {% if report.status|lower == 'published' %}
+      <span class="status">Published</span>
+      <button class="btn btn-outline" data-report="{{ report._id }}">Download Report</button>
+    {% else %}
+      <span class="status">Coming Soon</span>
+    {% endif %}
+  </div>
+</article>
+{% endmacro %}
+
 {% block content %}
 <header class="site-header" id="home">
   <nav class="navbar navbar-dark navbar-expand-lg nav">
@@ -80,48 +102,12 @@
 
     <div class="research-grid">
       {% if featured %}
-      <article class="report-card featured">
-        {% if featured.cover_image %}
-          <img class="report-image" src="{{ featured.cover_image }}" alt="{{ featured.title }}" />
-        {% endif %}
-        <div class="report-meta">
-          <span class="tag">{{ featured.category }}</span>
-          <span class="date">{{ featured.quarter }}</span>
-        </div>
-        <h3>{{ featured.title }}</h3>
-        <p>{{ featured.excerpt }}</p>
-        <div class="report-footer">
-          {% if featured.status|lower == 'published' %}
-            <span class="status">Published</span>
-            <button class="btn btn-outline" data-report="{{ featured._id }}">Download Report</button>
-          {% else %}
-            <span class="status">Coming Soon</span>
-          {% endif %}
-        </div>
-      </article>
+        {{ report_card(featured, True) }}
       {% endif %}
 
       <div class="report-list">
         {% for report in reports %}
-        <article class="report-card">
-          {% if report.cover_image %}
-            <img class="report-image" src="{{ report.cover_image }}" alt="{{ report.title }}" />
-          {% endif %}
-          <div class="report-meta">
-            <span class="tag">{{ report.category }}</span>
-            <span class="date">{{ report.quarter }}</span>
-          </div>
-          <h3>{{ report.title }}</h3>
-          <p>{{ report.excerpt }}</p>
-          <div class="report-footer">
-            {% if report.status|lower == 'published' %}
-              <span class="status">Published</span>
-              <button class="btn btn-outline" data-report="{{ report._id }}">Download Report</button>
-            {% else %}
-              <span class="status">Coming Soon</span>
-            {% endif %}
-          </div>
-        </article>
+          {{ report_card(report) }}
         {% endfor %}
       </div>
     </div>

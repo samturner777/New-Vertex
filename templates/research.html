@@ -80,7 +80,7 @@
     <!-- AUDIO PLAY BUTTON - SHOWS ONLY IF AUDIO EXISTS -->
     {% if report.audio_url %}
       <div class="audio-badge">
-        <button class="play-button" onclick="toggleAudio(this, '{{ report.audio_url }}')">
+        <button class="play-button" onclick="toggleAudio(this)">
           <span class="play-icon">▶</span>
         </button>
         <span class="audio-label">Audio Available</span>
